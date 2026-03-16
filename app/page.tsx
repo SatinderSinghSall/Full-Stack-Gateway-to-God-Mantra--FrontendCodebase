@@ -1,65 +1,88 @@
-import Image from "next/image";
+"use client";
+
+import Navbar from "@/components/Navbar";
+import MantraCard from "@/components/MantraCard";
+import { Flame } from "lucide-react";
+import { useState } from "react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function Home() {
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-orange-100/40">
+      <Navbar />
+
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        {/* HERO */}
+        <div className="text-center mb-20 relative">
+          <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[500px] h-[500px] bg-orange-200/40 blur-3xl rounded-full -z-10"></div>
+
+          <div className="flex items-center justify-center gap-2 text-orange-500 mb-4">
+            <Flame size={20} />
+            <span className="text-sm font-semibold tracking-wide">
+              Spiritual Library
+            </span>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+            Gateway to God
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="text-muted-foreground mt-6 max-w-2xl mx-auto text-base md:text-lg">
+            Discover sacred Hindu mantras, explore their meanings, and deepen
+            your spiritual journey through timeless chants.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <MantraCard
+            title="Hanuman Chalisa"
+            description="Read the sacred 40 verses praising Lord Hanuman."
+            link="/hanuman-chalisa"
+            icon="hanuman"
+          />
+
+          <MantraCard
+            title="Lalita Sahasranama"
+            description="Explore the thousand divine names of Goddess Lalita."
+            icon="lotus"
+            comingSoon
+            onComingSoon={() => setComingSoonOpen(true)}
+          />
+
+          <MantraCard
+            title="Rama Mantra"
+            description="Chant the powerful mantra of Lord Rama."
+            icon="flame"
+            comingSoon
+            onComingSoon={() => setComingSoonOpen(true)}
+          />
         </div>
-      </main>
+      </div>
+
+      {/* Coming Soon Modal */}
+      <Dialog open={comingSoonOpen} onOpenChange={setComingSoonOpen}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Coming Soon</DialogTitle>
+            <DialogDescription className="mt-3 text-base">
+              This sacred chant will be available very soon. Stay tuned as we
+              continue expanding the spiritual library.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4 text-orange-500 text-3xl">🪔</div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
