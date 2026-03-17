@@ -5,6 +5,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Flame, Sparkles, Sun } from "lucide-react";
 
+type MantraCardProps = {
+  title: string;
+  description: string;
+  link?: string;
+  icon: "hanuman" | "lotus" | "flame";
+  comingSoon?: boolean;
+  onComingSoon?: () => void;
+};
+
 export default function MantraCard({
   title,
   description,
@@ -12,7 +21,7 @@ export default function MantraCard({
   icon,
   comingSoon,
   onComingSoon,
-}) {
+}: MantraCardProps) {
   const icons = {
     hanuman: Sparkles,
     lotus: Sun,
@@ -44,7 +53,7 @@ export default function MantraCard({
             Open
           </Button>
         ) : (
-          <Link href={link} className="w-full">
+          <Link href={link!} className="w-full">
             <Button className="w-full mt-3 rounded-full">Open</Button>
           </Link>
         )}
