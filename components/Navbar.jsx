@@ -14,9 +14,11 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,7 +27,8 @@ export default function Navbar() {
 
   function logout() {
     localStorage.removeItem("token");
-    location.reload();
+    router.push("/");
+    // location.reload();
   }
 
   return (

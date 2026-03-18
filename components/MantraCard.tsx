@@ -53,9 +53,9 @@ export default function MantraCard({
             Open
           </Button>
         ) : (
-          <Link href={link!} className="w-full">
-            <Button className="w-full mt-3 rounded-full">Open</Button>
-          </Link>
+          <Button asChild className="w-full mt-3 rounded-full cursor-pointer">
+            <Link href={link!}>Open</Link>
+          </Button>
         )}
       </CardContent>
     </Card>
