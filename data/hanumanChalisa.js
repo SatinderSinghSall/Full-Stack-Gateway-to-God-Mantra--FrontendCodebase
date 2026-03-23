@@ -364,4 +364,22 @@ export const hanumanChalisa = [
     meaning:
       "Tulasīdās is the eternal servant of God. O Beloved, make my heart your abode.",
   },
+  {
+    number: "41",
+    verse:
+      "पवनतनय संकट हरन, मंगल मूरति रूप । राम लखन सीता सहित, हृदय बसहु सुरभूप ॥",
+    transliteration:
+      "pavana-tanaya saṅkaṭa harana, maṅgala mūrati rūpa, rāma lakhana sītā sahita, hṛdaya basahu surabhūpa",
+    meaning:
+      "May Hanumān, who removes all calamities, who has an auspicious form, and who is the king of celestials, dwell in my heart along with Śrī Rāma, Śrī Lakṣmaṇa, and Śrī Sītā.",
+  },
+  {
+    number: "42",
+    verse:
+      "सियावर रामचन्द्र की जय । पवनसुत हनुमान की जय । उमापति महादेव की जय । बोलो रे भाई सब सन्तन की जय ॥",
+    transliteration:
+      "siyāvara rāmacandra kī jay, pavana-suta hanuāmana kī jay, umāpati mahādeva kī jay, bolo re bhāī saba santana kī jay",
+    meaning:
+      "Glory to Śrī Rāma, the husband of Śrī Sīta, glory to Hanumān, the son of Pavana, Glory to Śiva, the husband of Śrī Umā, glory to all the saints.",
+  },
 ];
