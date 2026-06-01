@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import FAB from "@/components/FAB";
+
+import FABWrapper from "@/components/FABWrapper";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,11 +15,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Gateway to God - Mantras",
   description:
     "Discover sacred Hindu mantras and deepen your spiritual journey",
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,8 +31,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <FAB />
+        <AuthProvider>
+          {children}
+          <FABWrapper />
+        </AuthProvider>
       </body>
     </html>
   );

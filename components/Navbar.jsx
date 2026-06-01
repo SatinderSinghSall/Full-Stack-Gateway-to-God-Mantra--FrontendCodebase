@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
 import { Flame, LogOut, User } from "lucide-react";
+
+import { useAuth } from "@/context/AuthContext";
 
 import {
   Dialog,
@@ -14,41 +17,36 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) setLoggedIn(true);
-  }, []);
+  const { user, logout } = useAuth();
 
-  function logout() {
-    localStorage.removeItem("token");
-    router.push("/");
-    // location.reload();
+  function handleLogout() {
+    logout();
+    router.replace("/");
   }
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-xl">
+      {" "}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 lg:h-20 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo */}{" "}
         <Link href="/" className="flex items-center gap-3">
+          {" "}
           <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-orange-100 text-orange-600">
-            <Flame size={20} />
+            {" "}
+            <Flame size={20} />{" "}
           </div>
-
           <span className="font-semibold tracking-tight text-lg sm:text-xl lg:text-2xl">
             Gateway
             <span className="hidden sm:inline"> to God</span>
           </span>
         </Link>
-
         {/* Actions */}
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-          {!loggedIn && (
+          {!user && (
             <>
               <Link href="/login">
                 <Button
@@ -67,7 +65,7 @@ export default function Navbar() {
             </>
           )}
 
-          {loggedIn && (
+          {user && (
             <>
               <Link href="/profile">
                 <Button
@@ -75,11 +73,10 @@ export default function Navbar() {
                   className="rounded-full flex items-center gap-2 px-3 sm:px-5 text-sm sm:text-base"
                 >
                   <User size={16} />
-                  <span className="hidden sm:inline">Profile</span>
+                  <span className="hidden sm:inline">{user.name}</span>
                 </Button>
               </Link>
 
-              {/* Logout Dialog */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -94,6 +91,7 @@ export default function Navbar() {
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Confirm Logout</DialogTitle>
+
                     <DialogDescription>
                       Are you sure you want to logout from your spiritual
                       account?
@@ -105,7 +103,7 @@ export default function Navbar() {
 
                     <Button
                       variant="destructive"
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="rounded-full"
                     >
                       Logout

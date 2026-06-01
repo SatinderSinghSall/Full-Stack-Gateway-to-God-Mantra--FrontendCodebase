@@ -21,7 +21,7 @@ export default function ErrorAlert({ message, onClose }) {
         variant="ghost"
         size="icon"
         onClick={onClose}
-        className="h-7 w-7 rounded-md text-red-500 hover:bg-red-200/40"
+        className="h-7 w-7 rounded-md text-red-500 hover:bg-red-200/40 cursor-pointer"
       >
         <X size={16} />
       </Button>

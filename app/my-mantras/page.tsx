@@ -5,9 +5,10 @@ import API from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import EditMantraButton from "@/components/EditMantraButton";
 import DeleteButton from "@/components/DeleteButton";
-import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
-import { Sparkles, Plus } from "lucide-react";
+
+import { Plus, Sparkles, BookOpen } from "lucide-react";
 
 type Mantra = {
   _id: string;
@@ -26,11 +27,14 @@ export default function MyMantras() {
   const fetchMantras = async () => {
     try {
       const res = await API.get("/mantras", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       setMantras(res.data);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -40,97 +44,121 @@ export default function MyMantras() {
     fetchMantras();
   }, []);
 
+  const openAddDialog = () => {
+    document
+      .querySelector("button.fixed")
+      ?.dispatchEvent(new MouseEvent("click"));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-orange-100">
       <Navbar />
 
-      {/* 🔥 HERO */}
-      <div className="text-center pt-16 pb-10 relative">
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[500px] h-[500px] bg-orange-200/40 blur-3xl rounded-full -z-10"></div>
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+        {/* HEADER */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 text-orange-500 mb-4">
+            <Sparkles size={18} />
+            <span className="font-medium">Your Spiritual Collection</span>
+          </div>
 
-        <div className="flex items-center justify-center gap-2 text-orange-500 mb-3">
-          <Sparkles size={18} />
-          <span className="text-sm font-semibold tracking-wide">
-            Your Spiritual Collection
-          </span>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            My Mantras
+          </h1>
+
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+            Preserve your sacred chants, prayers, affirmations and reflections
+            in one peaceful place.
+          </p>
+
+          <Button onClick={openAddDialog} className="mt-8 rounded-full px-8">
+            <Plus size={18} className="mr-2" />
+            Add Mantra
+          </Button>
         </div>
 
-        <h1 className="text-3xl md:text-4xl font-bold">🪔 My Mantras</h1>
-
-        <p className="text-muted-foreground mt-3">
-          Preserve your personal chants & spiritual notes
-        </p>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-6 pb-16">
-        {/* 🔄 LOADING */}
+        {/* LOADING */}
         {loading && (
-          <div className="text-center text-muted-foreground animate-pulse">
-            Loading your mantras...
+          <div className="text-center py-24">
+            <div className="animate-pulse text-orange-500">
+              Loading your sacred collection...
+            </div>
           </div>
         )}
 
-        {/* 🌟 EMPTY STATE */}
+        {/* EMPTY STATE */}
         {!loading && mantras.length === 0 && (
-          <div className="text-center mt-20">
-            <div className="text-5xl mb-4">🪔</div>
+          <div className="mt-16 bg-white rounded-3xl shadow-lg border p-12 text-center">
+            <div className="text-6xl mb-6">🪔</div>
 
-            <h2 className="text-xl font-semibold mb-2">No mantras yet</h2>
+            <h2 className="text-3xl font-bold mb-3">
+              Your Sacred Space Awaits
+            </h2>
 
-            <p className="text-muted-foreground mb-6">
-              Start your spiritual journey by adding your first mantra
+            <p className="text-muted-foreground max-w-lg mx-auto mb-8">
+              Begin your spiritual journey by saving your first mantra, prayer,
+              affirmation or personal reflection.
             </p>
 
             <Button
-              onClick={() =>
-                document
-                  .querySelector("button.fixed")
-                  ?.dispatchEvent(new MouseEvent("click"))
-              }
-              className="rounded-full px-6 flex items-center gap-2 mx-auto"
+              size="lg"
+              onClick={openAddDialog}
+              className="rounded-full px-8"
             >
-              <Plus size={16} />
-              Add Mantra
+              <Plus className="mr-2" size={18} />
+              Add First Mantra
             </Button>
           </div>
         )}
 
-        {/* 📜 MANTRA LIST */}
-        <div className="space-y-6">
-          {mantras.map((m) => (
-            <div
-              key={m._id}
-              className="group relative bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-md border hover:shadow-xl transition-all duration-300"
-            >
-              {/* Glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-orange-100/40 via-yellow-100/30 to-orange-200/30 rounded-2xl"></div>
+        {/* MANTRAS */}
+        {!loading && mantras.length > 0 && (
+          <div className="mt-12 space-y-6">
+            {mantras.map((m) => (
+              <div
+                key={m._id}
+                className="bg-white rounded-3xl shadow-lg border p-6 sm:p-8 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center">
+                    <BookOpen size={18} className="text-orange-600" />
+                  </div>
 
-              <div className="relative">
-                {/* TITLE */}
-                <h2 className="text-lg font-semibold tracking-tight">
-                  {m.title}
-                </h2>
+                  <div>
+                    <h2 className="text-xl font-bold">{m.title}</h2>
 
-                {/* CONTENT */}
-                <p className="text-gray-700 mt-3 whitespace-pre-line leading-relaxed">
-                  {m.content}
-                </p>
+                    <p className="text-xs text-muted-foreground">
+                      Added on {new Date(m.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
 
-                {/* DATE */}
-                <p className="text-xs text-muted-foreground mt-4">
-                  {new Date(m.createdAt).toLocaleString()}
-                </p>
+                <div className="border-l-2 border-orange-200 pl-4">
+                  <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+                    {m.content}
+                  </p>
+                </div>
 
-                {/* ACTIONS */}
-                <div className="flex gap-3 mt-5">
+                <div className="flex gap-3 mt-6">
                   <EditMantraButton mantra={m} refresh={fetchMantras} />
+
                   <DeleteButton mantraId={m._id} refresh={fetchMantras} />
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        )}
+
+        {/* QUOTE */}
+        <div className="mt-12">
+          <div className="bg-white rounded-3xl border shadow-sm p-8 text-center">
+            <p className="text-lg italic text-gray-700">
+              “Every mantra repeated with devotion becomes a bridge between the
+              soul and inner peace.”
+            </p>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

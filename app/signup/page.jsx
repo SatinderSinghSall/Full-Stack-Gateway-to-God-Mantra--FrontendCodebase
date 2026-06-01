@@ -26,11 +26,14 @@ export default function SignupPage() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const [errors, setErrors] = useState({});
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ VALIDATION FUNCTION
+  // VALIDATION FUNCTION
   const validate = () => {
     const newErrors = {};
 
@@ -58,18 +61,78 @@ export default function SignupPage() {
     e.preventDefault();
 
     setError("");
+    setNameError("");
+    setEmailError("");
+    setPasswordError("");
 
-    if (!validate()) return;
+    // All fields empty
+    if (!name.trim() && !email.trim() && !password.trim()) {
+      setNameError("Name is required");
+      setEmailError("Email is required");
+      setPasswordError("Password is required");
+
+      setError("Name, Email and Password are required.");
+      return;
+    }
+
+    // Name empty
+    if (!name.trim()) {
+      setNameError("Name is required");
+      setError("Please enter your name.");
+      return;
+    }
+
+    // Email empty
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      setError("Please enter your email address.");
+      return;
+    }
+
+    // Invalid email
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Invalid email format");
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    // Password empty
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      setError("Please enter your password.");
+      return;
+    }
+
+    // Weak password
+    if (password.length < 6) {
+      setPasswordError("Minimum 6 characters required");
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
     setLoading(true);
 
     try {
-      await API.post("/auth/signup", { name, email, password });
+      await API.post("/auth/signup", {
+        name,
+        email,
+        password,
+      });
+
       router.push("/login");
     } catch (err) {
-      setError(
-        err?.response?.data?.message || "Signup failed. Please try again.",
-      );
+      const code = err?.response?.data?.code;
+
+      switch (code) {
+        case "EMAIL_ALREADY_EXISTS":
+          setError("An account already exists with this email.");
+          break;
+
+        default:
+          setError(
+            err?.response?.data?.message || "Signup failed. Please try again.",
+          );
+      }
     } finally {
       setLoading(false);
     }
@@ -105,17 +168,21 @@ export default function SignupPage() {
                     size={18}
                   />
                   <Input
-                    className={`pl-10 h-11 rounded-lg ${
-                      errors.name
-                        ? "border-red-500 focus-visible:ring-red-400"
-                        : "focus-visible:ring-orange-400"
+                    value={name}
+                    className={`pl-10 h-11 rounded-lg focus-visible:ring-orange-400 ${
+                      nameError ? "border-red-500" : ""
                     }`}
                     placeholder="Your name"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value);
+
+                      if (nameError) setNameError("");
+                      if (error) setError("");
+                    }}
                   />
                 </div>
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name}</p>
+                {nameError && (
+                  <p className="text-sm text-red-500">{nameError}</p>
                 )}
               </div>
 
@@ -129,17 +196,21 @@ export default function SignupPage() {
                   />
                   <Input
                     type="email"
-                    className={`pl-10 h-11 rounded-lg ${
-                      errors.email
-                        ? "border-red-500 focus-visible:ring-red-400"
-                        : "focus-visible:ring-orange-400"
+                    value={email}
+                    className={`pl-10 h-11 rounded-lg focus-visible:ring-orange-400 ${
+                      emailError ? "border-red-500" : ""
                     }`}
                     placeholder="you@email.com"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+
+                      if (emailError) setEmailError("");
+                      if (error) setError("");
+                    }}
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email}</p>
+                {emailError && (
+                  <p className="text-sm text-red-500">{emailError}</p>
                 )}
               </div>
 
@@ -154,32 +225,35 @@ export default function SignupPage() {
 
                   <Input
                     type={showPassword ? "text" : "password"}
-                    className={`pl-10 pr-10 h-11 rounded-lg ${
-                      errors.password
-                        ? "border-red-500 focus-visible:ring-red-400"
-                        : "focus-visible:ring-orange-400"
+                    value={password}
+                    className={`pl-10 pr-10 h-11 rounded-lg focus-visible:ring-orange-400 ${
+                      passwordError ? "border-red-500" : ""
                     }`}
                     placeholder="••••••••"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+
+                      if (passwordError) setPasswordError("");
+                      if (error) setError("");
+                    }}
                   />
 
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password}</p>
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
                 )}
               </div>
 
               {/* BUTTON */}
               <Button
-                className="w-full h-11 rounded-full flex items-center justify-center gap-2 text-base bg-black hover:bg-gray-900 transition"
+                className="w-full h-11 rounded-full flex items-center justify-center gap-2 text-base bg-black hover:bg-gray-900 transition cursor-pointer"
                 disabled={loading}
               >
                 {loading && <LoadingSpinner />}

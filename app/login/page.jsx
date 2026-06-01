@@ -16,8 +16,11 @@ import LoadingSpinner from "@/components/ui/loading-spinner";
 import ScreenLoader from "@/components/ui/screen-loader";
 import ErrorAlert from "../../components/ui/error-alert";
 
+import { useAuth } from "@/context/AuthContext";
+
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,20 +30,82 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     setError("");
+    setEmailError("");
+    setPasswordError("");
+
+    let hasError = false;
+
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      hasError = true;
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      hasError = true;
+    }
+
+    if (!email.trim() && !password.trim()) {
+      setEmailError("Email is required");
+      setPasswordError("Password is required");
+      setError("Email and Password are required.");
+      return;
+    }
+
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      setError("Please enter your email address.");
+      return;
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      setError("Please enter your password.");
+      return;
+    }
+
+    if (hasError) return;
+
     setLoading(true);
 
     try {
-      const res = await API.post("/auth/login", { email, password });
+      const res = await API.post("/auth/login", {
+        email,
+        password,
+      });
 
-      localStorage.setItem("token", res.data.token);
+      login(
+        {
+          _id: res.data._id,
+          name: res.data.name,
+          email: res.data.email,
+        },
+        res.data.token,
+      );
 
       router.push("/");
     } catch (err) {
-      setError(err?.response?.data?.message || "Invalid email or password.");
+      const code = err?.response?.data?.code;
+
+      switch (code) {
+        case "ACCOUNT_NOT_FOUND":
+          setError("No account found with this email.");
+          break;
+
+        case "INVALID_PASSWORD":
+          setError("Incorrect password.");
+          break;
+
+        default:
+          setError("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -86,6 +151,10 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
+
+                {emailError && (
+                  <p className="text-sm text-red-500">{emailError}</p>
+                )}
               </div>
 
               {/* PASSWORD */}
@@ -109,16 +178,19 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
               </div>
 
               {/* LOGIN BUTTON */}
               <Button
-                className="w-full h-11 rounded-full flex items-center justify-center gap-2 text-base bg-black hover:bg-gray-900 transition"
+                className="w-full h-11 rounded-full flex items-center justify-center gap-2 text-base bg-black hover:bg-gray-900 transition cursor-pointer"
                 disabled={loading}
               >
                 {loading && <LoadingSpinner />}
